@@ -9,8 +9,7 @@ const Weather = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const API_KEY =
-    import.meta.env.VITE_WEATHER_API_KEY || "1ba772ce109561d482871658bb494843 ";
+  const API_KEY = import.meta.env.VITE_WEATHER_API_KEY || " 1ba772ce109561d482871658bb494843 ";
 
   
   const fetchWeatherByLocation = async (lat, lon) => {
