@@ -10,7 +10,7 @@ const Weather = () => {
   const [loading, setLoading] = useState(false);
 
   const API_KEY =
-    import.meta.env.VITE_WEATHER_API_KEY || "1ba772ce109561d482871658bb494843";
+    import.meta.env.VITE_WEATHER_API_KEY || "1ba772ce109561d482871658bb494843 ";
 
   
   const fetchWeatherByLocation = async (lat, lon) => {
@@ -70,7 +70,7 @@ const Weather = () => {
   useEffect(() => {
     if (weatherData) {
       gsap.from("#weather-card", {
-        opacity: 0,
+        opacity: 1,
         y: 50,
         duration: 1,
         ease: "power3.out",
@@ -145,7 +145,7 @@ const Weather = () => {
       id="weather-card"
       className="rounded-xl shadow-2xl p-6 flex flex-col gap-5 justify-between hover:scale-105 transition-transform duration-500"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ">
         {getWeatherIcon(weatherData?.weather?.[0]?.main)}
         <div>
           <h2 className="text-2xl font-bold text-green-800 mb-1">
