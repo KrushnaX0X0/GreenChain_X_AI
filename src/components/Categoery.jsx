@@ -7,8 +7,11 @@ import carrot from "../assets/carrot.png";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useNavigate } from "react-router-dom";
 
 const Categoery = () => {
+
+  const navigate = useNavigate();
   
   gsap.registerPlugin(ScrollTrigger);
 
@@ -138,7 +141,9 @@ const Categoery = () => {
       
       <div className="h-40 w-full flex items-center justify-center">
         <div className="view-btn h-10 w-40 border flex justify-center items-center cursor-pointer hover:bg-green-600 hover:text-white rounded-sm transition-all duration-300">
-          <button className="border-none cursor-pointer">
+          <button className="border-none cursor-pointer" onClick={()=>{
+            navigate("/shop")
+          }}>
             View All Products
           </button>
         </div>

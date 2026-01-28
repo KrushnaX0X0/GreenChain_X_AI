@@ -11,16 +11,16 @@ const OrderDetails = () => {
     const userData = JSON.parse(localStorage.getItem("userData"));
     const orders = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // if (!userData || orders.length === 0) {
-    //   navigate("/");
-    //   return;
-    // }
+    if (!userData || orders.length === 0) {
+      navigate("/");
+      return;
+    }
 
     setUser(userData);
     setOrder(orders); // latest order
   }, [navigate]);
 
-//   if (!user || !order) return null;
+  if (!user || !order) return null;
 
 console.log(order)
 

@@ -11,6 +11,7 @@ import Payment from './components/Payment/Payment'
 import Cart from './components/Cart'
 import OrderDetails from './components/OrderDetails'
 import Bill from './components/Payment/Bill'
+import Service from './view/Service'
 
 
 const App = () => {
@@ -42,6 +43,8 @@ const App = () => {
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/order' element={<OrderDetails/>}/>
           <Route path="/bill" element={<Bill />} />
+          <Route path="/services" element={<Service />} />
+
 
           
 

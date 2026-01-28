@@ -24,7 +24,7 @@ const CheckoutForm = () => {
     navigate("/order");
   };
 
-  // 🎮 3D Mouse Move Effect
+  
   const handleMouseMove = (e) => {
     const card = cardRef.current;
     const rect = card.getBoundingClientRect();
