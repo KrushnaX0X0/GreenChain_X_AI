@@ -5,6 +5,34 @@ background-color: rgb(227, 229, 231);
 overflow-x: hidden;
 }
 
+body::-webkit-scrollbar{
+    display: none;
+}
+
+@font-face {
+  font-family: "InstrumentSerif";
+  src: url("/src/font/InstrumentSerif-Regular.ttf") format("truetype");
+  font-display: swap;
+}
+
+
+@keyframes float {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-15px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+
 
 .bg{
     background-color:   rgb(254, 255, 255);

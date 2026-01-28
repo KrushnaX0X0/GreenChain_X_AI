@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import { Link } from "react-router-dom";
 import bg from "../assets/bg.png";
 
@@ -6,6 +6,24 @@ import bg from "../assets/bg.png";
 const Navbar = () => {
 
 
+   const [cartCount, setCartCount] = useState(0);
+
+  const loadCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    setCartCount(count);
+  };
+
+  useEffect(() => {
+    loadCartCount();
+
+    
+    window.addEventListener("cartUpdated", loadCartCount);
+
+    return () => {
+      window.removeEventListener("cartUpdated", loadCartCount);
+    };
+  }, []);
   return (
     <div id="navbar" className="h-15 w-screen  fixed top-0 z-[9999]  backdrop-blur-sm  ">
       <div className="flex items-center justify-between mt-2 px-4">
@@ -27,8 +45,8 @@ const Navbar = () => {
               <Link to="/shop">Shop</Link>
             </li>
             <li className="h-10 relative " >
-              <Link to="/login"><i className="ri-shopping-cart-2-line text-xl "></i></Link>
-              <div className="bg-green-500 h-4 w-4 rounded-full flex justify-center items-center absolute top-[-6px] right-[-5px] text-[0.7em] ">1</div>
+              <Link to="/cart"><i className="ri-shopping-cart-2-line text-xl "></i></Link>
+              <div className="bg-green-500 h-4 w-4 rounded-full flex justify-center items-center absolute top-[-6px] right-[-5px] text-[0.7em] ">{cartCount}</div>
             </li>
             <li>
               <Link to="/login">Login</Link>

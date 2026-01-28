@@ -6,6 +6,10 @@ import Shop from './view/Shop'
 import Login from './view/Login'
 import Signup from './view/Signup'
 import Dashboard from './view/Dashbord'
+import CheckoutForm from './components/Payment/CheckoutForm'
+import Payment from './components/Payment/Payment'
+import Cart from './components/Cart'
+import OrderDetails from './components/OrderDetails'
 
 
 const App = () => {
@@ -32,6 +36,10 @@ const App = () => {
           <Route path='/login' element={<Login/>} />
           <Route path='/signup' element={<Signup/>} />
           <Route path='/dashbord' element={<Dashboard/>} />
+          <Route path='/chekout' element={<CheckoutForm/>}/>
+          <Route path='/payment' element={<Payment/>}/>
+          <Route path='/cart' element={<Cart/>}/>
+          <Route path='/order' element={<OrderDetails/>}/>
           
 
         </Routes>
