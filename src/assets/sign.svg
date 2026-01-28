@@ -1,0 +1,27 @@
+<svg width="320" height="90" viewBox="0 0 320 90" xmlns="http://www.w3.org/2000/svg">
+  <!-- Signature Stroke -->
+  <path
+    d="M10 55
+       C 25 20, 45 80, 70 45
+       S 110 20, 130 45
+       S 170 75, 190 45
+       S 230 15, 255 45
+       S 290 70, 310 40"
+    stroke="#065F46"
+    stroke-width="3.5"
+    fill="none"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Name -->
+  <text
+    x="160"
+    y="80"
+    font-size="16"
+    font-family="cursive"
+    fill="#065F46"
+    text-anchor="middle">
+    Krushna Jagtap
+  </text>
+</svg>

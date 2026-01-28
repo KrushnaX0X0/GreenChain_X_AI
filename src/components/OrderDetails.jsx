@@ -32,7 +32,7 @@ console.log(order)
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-100 px-4 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-100 px-4 ">
       <div className="max-w-6xl mx-auto bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-10">
 
         {/* 🌿 HEADING */}
@@ -42,7 +42,7 @@ console.log(order)
 
         <div className="grid md:grid-cols-2 gap-12">
 
-          {/* 👤 USER DETAILS */}
+          
           <div className="bg-green-50 rounded-2xl p-6 shadow">
             <h2 className="text-3xl font-bold mb-4 text-gray-800">
                Customer Details

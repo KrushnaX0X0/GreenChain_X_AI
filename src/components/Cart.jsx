@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import emptyCart from "../assets/empty-cart-3d.png";
+import emptyCart from "../assets/shop.png";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
-  // Load cart
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
   }, []);
 
-  // Update cart + localStorage
   const updateCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
@@ -54,121 +52,135 @@ const Cart = () => {
   );
 
   return (
-    <div className="pt-8 px-4 md:px-16 min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-100">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-green-50 via-white to-emerald-100 flex items-center justify-center px-6">
 
-      {/* HEADING */}
-      <div className="text-center mb-12">
-        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
-          Your Shopping Cart
-        </h1>
-        <p className="text-gray-600 mt-3 text-lg font-semibold">
-          Fresh products, directly from farmers 🌱
-        </p>
-      </div>
+      {/* MAIN CARD */}
+      <div className="w-full max-w-5xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8">
 
-      {/* EMPTY CART */}
-      {cart.length === 0 ? (
-        <div className="flex flex-col items-center justify-center mt-20 text-center">
-          <img
-            src={emptyCart}
-            alt="Empty Cart"
-            className="w-72 h-72 mb-6 drop-shadow-2xl animate-float"
-          />
-
-          <h2 className="text-4xl font-extrabold text-gray-800 mb-3">
-            Your Cart is Empty
-          </h2>
-
-          <p className="text-lg text-gray-500 mb-8 max-w-md">
-            Looks like you haven’t added anything yet.  
-            Start shopping fresh farm products 🥕🍎
+        {/* HEADING */}
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
+            Your Shopping Cart
+          </h1>
+          <p className="text-gray-600 mt-2 text-lg font-semibold">
+            Fresh products directly from farmers 🌱
           </p>
-
-          <button
-            onClick={() => navigate("/")}
-            className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-10 py-4 rounded-2xl text-xl font-semibold hover:scale-110 transition-transform shadow-xl"
-          >
-            🛍 Start Shopping
-          </button>
         </div>
-      ) : (
-        /* CART ITEMS */
-        <div className="max-w-5xl mx-auto bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl p-8">
-          {cart.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col md:flex-row items-center justify-between gap-6 border-b py-6"
+
+        {/* EMPTY CART */}
+        {cart.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-center">
+            <img
+              src={emptyCart}
+              alt="Empty Cart"
+              className="w-56 h-56 mb-4 animate-float"
+            />
+
+            <h2 className="text-3xl font-extrabold text-gray-800 mb-2">
+              Your Cart is Empty
+            </h2>
+
+            <p className="text-gray-500 mb-6">
+              Start shopping fresh farm products 🥕🍎
+            </p>
+
+            <button
+              onClick={() => navigate("/")}
+              className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-8 py-3 rounded-2xl text-lg font-semibold hover:scale-105 transition-transform shadow-xl"
             >
-              {/* Product */}
-              <div>
-                <h3 className="text-2xl font-semibold text-gray-800">
-                  {item.name}
-                </h3>
-                <p className="text-gray-500">
-                  ₹ {item.price} / kg
-                </p>
-              </div>
+              🛍 Start Shopping
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* CART ITEMS */}
+         <div className="space-y-4 max-h-[45vh] overflow-y-scroll scrollbar-hide">
 
-              {/* Quantity */}
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => decreaseQty(item.id)}
-                  className="w-10 h-10 rounded-full bg-red-100 text-red-600 text-xl font-bold hover:bg-red-200 transition"
+              {cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between border-b pb-4 "
                 >
-                  −
-                </button>
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      {item.name}
+                    </h3>
+                    <p className="text-gray-500">
+                      ₹ {item?.price} / kg
+                    </p>
+                  </div>
 
-                <span className="text-xl font-bold">
-                  {item.qty}
-                </span>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => decreaseQty(item.id)}
+                      className="w-9 h-9 rounded-full bg-red-100 text-red-600 font-bold"
+                    >
+                      −
+                    </button>
 
-                <button
-                  onClick={() => increaseQty(item.id)}
-                  className="w-10 h-10 rounded-full bg-green-100 text-green-600 text-xl font-bold hover:bg-green-200 transition"
-                >
-                  +
-                </button>
-              </div>
+                    <span className="text-lg font-bold">
+                      {item.qty}
+                    </span>
 
-              {/* Price */}
-              <div className="text-xl font-bold text-gray-800">
-                ₹ {item.price * item.qty}
-              </div>
+                    <button
+                      onClick={() => increaseQty(item.id)}
+                      className="w-9 h-9 rounded-full bg-green-100 text-green-600 font-bold"
+                    >
+                      +
+                    </button>
+                  </div>
 
-              {/* Remove */}
+                  <div className="font-bold text-lg">
+                    ₹ {item.price * item.qty}
+                  </div>
+
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="text-red-500 text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* TOTAL */}
+            <div className="flex justify-between items-center mt-6 text-2xl font-extrabold">
+              <span>Total</span>
+              <span>₹ {total}</span>
+            </div>
+
+            {/* ACTIONS */}
+            <div className="flex gap-4 mt-6">
               <button
-                onClick={() => removeItem(item.id)}
-                className="text-red-500 hover:text-red-700 text-sm"
+                onClick={() => navigate("/checkout")}
+                className="flex-1 bg-gradient-to-r cursor-pointer from-green-600 to-emerald-500 text-white py-3 rounded-xl text-lg font-semibold hover:scale-105 transition"
               >
-                Remove
+                Place Order
+              </button>
+
+              <button
+                onClick={clearCart}
+                className="flex-1 bg-gradient-to-r cursor-pointer from-red-500 to-pink-500 text-white py-3 rounded-xl text-lg font-semibold hover:scale-105 transition"
+              >
+                Clear Cart
               </button>
             </div>
-          ))}
+          </>
+        )}
+      </div>
 
-          {/* TOTAL */}
-          <div className="flex justify-between items-center mt-8 text-3xl font-extrabold text-gray-800">
-            <span>Total Amount</span>
-            <span>₹ {total}</span>
-          </div>
-
-          {/* ACTIONS */}
-          <div className="flex flex-col md:flex-row gap-6 mt-10">
-            <button
-              onClick={() => navigate("/checkout")}
-              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-500 text-white py-4 rounded-2xl text-xl font-semibold hover:scale-105 transition-transform shadow-lg"
-            >
-              Place Order
-            </button>
-
-            <button
-              onClick={clearCart}
-              className="flex-1 bg-gradient-to-r from-red-500 to-pink-500 text-white py-4 rounded-2xl text-xl font-semibold hover:scale-105 transition-transform shadow-lg"
-            >
-              Clear Cart
-            </button>
-          </div>
-        </div>
-      )}
+      {/* FLOAT ANIMATION */}
+      <style>{`
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };
