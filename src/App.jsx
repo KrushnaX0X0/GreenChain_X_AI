@@ -12,6 +12,8 @@ import Cart from './components/Cart'
 import OrderDetails from './components/OrderDetails'
 import Bill from './components/Payment/Bill'
 import Service from './view/Service'
+import { Toaster } from "react-hot-toast";
+
 
 
 const App = () => {
@@ -32,7 +34,23 @@ const App = () => {
       {loding ? (
         <Loding />
       ) : (
+        <>
+           <Toaster
+        position="top-right"
+        containerStyle={{
+          zIndex: 99999,  
+        }}
+        toastOptions={{
+          style: {
+            borderRadius: "12px",
+            background: "#16a34a",
+            color: "#fff",
+          },
+        }}
+      />
+    
         <Routes>
+          
           <Route path="/" element={<Home />} />
           <Route path='/shop' element={<Shop/>} />
           <Route path='/login' element={<Login/>} />
@@ -49,6 +67,7 @@ const App = () => {
           
 
         </Routes>
+        </>
       )}
     </BrowserRouter>
   )

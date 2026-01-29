@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import Categoery from '../components/Categoery';
 import Thired from '../components/Thired';
+import AgriChatbot from '../components/AI/AgriChatbot';
 
 const Home = () => {
 
@@ -27,6 +28,7 @@ const Home = () => {
   <Hero/>
   <Categoery/>
   <Thired/>
+  <AgriChatbot/>
 
   
   </>

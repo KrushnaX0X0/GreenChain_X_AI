@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import AgriChatbot from "../components/AI/AgriChatbot";
 
 const Service = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const Service = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-100 px-6 py-16">
         <Navbar/>
 
-      {/* HERO SECTION */}
+      
       <div className="text-center mb-16">
         <h1 className="text-5xl font-extrabold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent">
           Our Services
@@ -53,7 +54,7 @@ const Service = () => {
         </p>
       </div>
 
-      {/* SERVICES GRID */}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
 
         {services.map((service, index) => (
@@ -77,7 +78,7 @@ const Service = () => {
 
       </div>
 
-      {/* CTA SECTION */}
+
       <div className="text-center mt-20">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-4">
           Ready to shop fresh products?
@@ -89,11 +90,13 @@ const Service = () => {
 
         <button
           onClick={() => navigate("/shop")}
-          className="bg-gradient-to-r from-green-600 to-emerald-500 text-white px-10 py-4 rounded-2xl text-xl font-semibold hover:scale-105 transition-transform shadow-xl"
+          className="bg-gradient-to-r from-green-600 cursor-pointer to-emerald-500 text-white px-10 py-4 rounded-2xl text-xl font-semibold hover:scale-105 transition-transform shadow-xl"
         >
-          🛒 Start Shopping
+           Start Shopping
         </button>
       </div>
+
+      <AgriChatbot/>
 
     </div>
   );

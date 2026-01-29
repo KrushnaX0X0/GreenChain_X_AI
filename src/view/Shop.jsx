@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 import Navbar from "../components/Navbar";
+import AgriChatbot from "../components/AI/AgriChatbot";
 
 import carrot from "../assets/carrot.png";
 import apple from "../assets/apple.png";
@@ -22,7 +25,6 @@ const Shop = () => {
     p.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  
   const addToCart = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -34,20 +36,23 @@ const Shop = () => {
           ? { ...item, qty: item.qty + 1 }
           : item
       );
+
+      // toast.success(`${product.name} quantity updated 🛒`);
     } else {
       cart.push({ ...product, qty: 1 });
+
+      toast.success(`${product.name} added to cart 🥕`);
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-
-      window.dispatchEvent(new Event("cartUpdated"));
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   return (
     <>
       <Navbar />
 
-      <div className="pt-24 px-10 min-h-screen bg-green-50">
+      <div className="pt-24 px-10 min-h-screen bg-green-50 relative">
         <h1 className="text-4xl font-bold text-center mb-6">
           Fresh Farm Products
         </h1>
@@ -58,7 +63,7 @@ const Shop = () => {
             placeholder="Search products..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-1/2 p-2 rounded-full shadow"
+            className="w-1/2 p-2 rounded-full shadow outline-none"
           />
         </div>
 
@@ -66,7 +71,9 @@ const Shop = () => {
           {filteredProducts.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-xl shadow p-6 flex flex-col items-center"
+              className="bg-white rounded-xl shadow-xl/30 p-6 
+                         flex flex-col items-center
+                         hover:scale-105 transition"
             >
               <img
                 src={product.image}
@@ -75,17 +82,23 @@ const Shop = () => {
               />
 
               <h3 className="text-xl font-semibold">{product.name}</h3>
-              <p className="text-gray-600 mb-4">₹ {product.price} / kg</p>
+              <p className="text-gray-600 mb-4">
+                ₹ {product.price} / kg
+              </p>
 
               <button
                 onClick={() => addToCart(product)}
-                className="bg-green-600 text-white px-6 py-2 rounded-md"
+                className="bg-green-600 text-white px-6 cursor-pointer py-2 
+                           rounded-md hover:bg-green-700 transition"
               >
                 Add to Cart
               </button>
             </div>
           ))}
         </div>
+
+        
+        <AgriChatbot />
       </div>
     </>
   );
