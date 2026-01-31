@@ -13,6 +13,8 @@ import OrderDetails from './components/OrderDetails'
 import Bill from './components/Payment/Bill'
 import Service from './view/Service'
 import { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 
@@ -35,6 +37,23 @@ const App = () => {
         <Loding />
       ) : (
         <>
+
+         <ToastContainer
+  position="top-right"
+  autoClose={3000}
+  newestOnTop
+  closeOnClick
+  pauseOnHover
+  style={{
+    marginTop: "5px",   // 🔽 push below navbar
+    zIndex: 999999       // 🔥 must be very high
+  }}
+  toastStyle={{
+    zIndex: 999999
+  }}
+/>
+
+
            <Toaster
         position="top-right"
         containerStyle={{
@@ -48,6 +67,8 @@ const App = () => {
           },
         }}
       />
+
+       
     
         <Routes>
           
