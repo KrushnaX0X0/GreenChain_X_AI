@@ -15,6 +15,7 @@ import Service from './view/Service'
 import { Toaster } from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import UserDashboard from './view/UserDashboard'
 
 
 
@@ -83,6 +84,7 @@ const App = () => {
           <Route path='/order' element={<OrderDetails/>}/>
           <Route path="/bill" element={<Bill />} />
           <Route path="/services" element={<Service />} />
+          <Route path='userdashbord' element={<UserDashboard/>}/>
 
 
           

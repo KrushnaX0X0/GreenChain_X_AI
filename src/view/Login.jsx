@@ -61,7 +61,7 @@ const Login = () => {
     toast.success(" Login successful! Welcome back");
 
     setTimeout(() => {
-      navigate("/");
+      navigate("/userdashbord");
     }, 1500);
   } catch (err) {
     toast.error(" Invalid email or password");
