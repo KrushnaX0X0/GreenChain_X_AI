@@ -16,6 +16,7 @@ import { Toaster } from "react-hot-toast";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserDashboard from './view/UserDashboard'
+import OAuthSuccess from './view/OAuthSuccess'
 
 
 
@@ -85,6 +86,7 @@ const App = () => {
           <Route path="/bill" element={<Bill />} />
           <Route path="/services" element={<Service />} />
           <Route path='userdashbord' element={<UserDashboard/>}/>
+          <Route path="/oauth-success" element={<OAuthSuccess />} />
 
 
           

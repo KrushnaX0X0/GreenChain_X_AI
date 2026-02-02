@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-  LayoutDashboard, ShoppingBag, LogOut, ChevronDown, ChevronUp, Package, MapPin 
+  LayoutDashboard, ShoppingBag, LogOut, ChevronDown, ChevronUp, 
+  Package, MapPin, Leaf, ShieldCheck, HelpCircle, Trophy, Recycle 
 } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState('Dashboard');
@@ -28,52 +30,259 @@ const UserDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.href = '/login'; // Or your routing logic
+    window.location.href = '/login';
   };
 
   return (
-    <div className="flex h-screen bg-[#F0FDF4] font-sans ">
-      {/* Sidebar */}
-      <aside className="w-64 bg-gradient-to-b flex flex-col justify-center from-[#16a34a] to-[#065f46] text-white flex flex-col shadow-xl">
-        <div className="p-6 flex items-center gap-2 text-xl font-bold border-b border-white/10">
-          <div className="bg-white/20 p-1 rounded-lg">🍃</div>
-          GreenChain
-        </div>
-        <nav className="flex-1 px-3 mt-4 space-y-1">
-          <SidebarLink name="Dashboard" active={activeTab} setter={setActiveTab} icon={<LayoutDashboard size={20}/>} />
-          <SidebarLink name="My Orders" active={activeTab} setter={setActiveTab} icon={<ShoppingBag size={20}/>} />
+    <div className="flex h-screen bg-[#F0FDF4] font-sans">
+      <Navbar/>
+      
+      {/* Sidebar - Updated with more navigation options */}
+      <aside className="w-64 bg-gradient-to-b from-[#16a34a] to-[#065f46] text-white flex flex-col shadow-xl">
+        <nav className="flex-1 px-3 mt-20 space-y-1">
+          <SidebarLink name="Dashboard" active={activeTab} setter={setActiveTab} icon={<LayoutDashboard size={18}/>} />
+          <SidebarLink name="My Orders" active={activeTab} setter={setActiveTab} icon={<ShoppingBag size={18}/>} />
+          <SidebarLink name="Eco Impact" active={activeTab} setter={setActiveTab} icon={<Leaf size={18}/>} />
+          <SidebarLink name="Support" active={activeTab} setter={setActiveTab} icon={<HelpCircle size={18}/>} />
         </nav>
 
-         <button 
-          onClick={handleLogout}
-          className="w-[90%] flex items-center gap-3 px-4 py-3 rounded-xl flex justify-evenly transition-all border-none bg-gray-100 hover:bg-gray-300 cursor-pointer outline-none"
-        >
-          <span className="text-[10px] t font-black text-gray-900 uppercase tracking-[0.2em] group-hover:text-gray-400 transition-colors">
-            Logout
-          </span>
-          <span className="text-gray-900 group-hover:text-gray-400 transition-colors">
-            →
-          </span>
-        </button>
+        <div className="p-4">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all border-none bg-gray-100 hover:bg-gray-300 cursor-pointer outline-none group"
+          >
+            <span className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">Logout</span>
+            <span className="text-gray-900 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+        </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
         <div className="p-10 overflow-y-auto">
-          {activeTab === 'Dashboard' && <StatsSummary orders={orders} />}
+          {activeTab === 'Dashboard' && (
+            <>
+              <StatsSummary orders={orders} />
+              <div className="mt-8">
+                <SustainabilityFeatures />
+              </div>
+            </>
+          )}
           {activeTab === 'My Orders' && <OrderList orders={orders} loading={loading} />}
+          {activeTab === 'Eco Impact' && <EcoImpactDetailed orders={orders} />}
+          {activeTab === 'Support' && <SupportFeature />}
         </div>
       </main>
-
-
-
-  
-
     </div>
   );
 };
 
-// --- Sub-Components ---
+// --- NEW FEATURE: Sustainability Modules ---
+
+const SustainabilityFeatures = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Gamification Badge System */}
+    <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm">
+      <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-6">Achievements</h3>
+      <div className="flex gap-4">
+        <div className="flex flex-col items-center gap-2">
+          <div className="h-14 w-14 rounded-full bg-green-100 flex items-center justify-center text-green-600 shadow-inner">
+            <Trophy size={24} />
+          </div>
+          <span className="text-[9px] font-bold text-gray-500 uppercase">Seedling</span>
+        </div>
+        <div className="flex flex-col items-center gap-2 opacity-30 grayscale">
+          <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+            <ShieldCheck size={24} />
+          </div>
+          <span className="text-[9px] font-bold text-gray-500 uppercase">Protector</span>
+        </div>
+      </div>
+      <p className="mt-6 text-sm text-gray-600 leading-relaxed font-medium">
+        You are <span className="text-green-600 font-bold">2 orders away</span> from the "Earth Protector" badge.
+      </p>
+    </div>
+
+    {/* Recycling Quick Action */}
+    <div className="bg-green-50 p-8 rounded-[32px] border border-green-100 flex justify-between items-center group cursor-pointer hover:bg-green-100 transition-all">
+      <div>
+        <h3 className="text-xl font-black text-green-900 tracking-tighter">Recycle Program</h3>
+        <p className="text-xs text-green-700 font-medium">Schedule a pickup for used packaging.</p>
+      </div>
+      <div className="h-12 w-12 bg-green-600 text-white rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform">
+        <Recycle size={20} />
+      </div>
+    </div>
+  </div>
+);
+
+// --- NEW FEATURE: Eco Impact Detailed ---
+
+const EcoImpactDetailed = ({ orders }) => {
+  const carbonSaved = orders.length * 2.4; // Dummy logic: 2.4kg per order
+  return (
+    <div className="animate-in fade-in duration-700">
+      <h2 className="text-4xl font-black text-gray-900 tracking-tighter mb-8">Eco Impact Score</h2>
+      <div className="bg-white rounded-[40px] p-12 border border-gray-100 relative overflow-hidden">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between gap-10">
+          <div className="space-y-4">
+            <div className="text-[10px] font-black text-green-500 uppercase tracking-widest">Calculated Savings</div>
+            <div className="text-8xl font-black text-gray-900 tracking-tighter">
+              {carbonSaved.toFixed(1)} <span className="text-3xl">kg/CO2</span>
+            </div>
+            <p className="text-gray-500 max-w-md font-medium">
+              By using GreenChain for your last {orders.length} transactions, you've prevented carbon emissions equivalent to planting {Math.floor(carbonSaved / 0.5)} small trees.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-6 rounded-2xl">
+              <p className="text-[9px] font-black text-gray-400 uppercase">Plastic Saved</p>
+              <p className="text-xl font-black">{orders.length * 0.5}kg</p>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-2xl">
+              <p className="text-[9px] font-black text-gray-400 uppercase">Green Points</p>
+              <p className="text-xl font-black">{orders.length * 100}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- NEW FEATURE: Support Hub ---
+
+const SupportFeature = ({ orders }) => {
+  const [ticketType, setTicketType] = useState(null);
+
+  return (
+    <div className="max-w-5xl animate-in slide-in-from-bottom-4 duration-500 space-y-10">
+      <header>
+        <h2 className="text-[10px] font-black text-green-600 uppercase tracking-[0.3em] mb-2">Service Center</h2>
+        <h3 className="text-4xl font-black text-gray-900 tracking-tighter">How can we help you today?</h3>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left: Quick Actions & Ticket Creation */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { id: 'orders', label: 'Order Issues', icon: <Package size={20} /> },
+              { id: 'refund', label: 'Refund Status', icon: <ShieldCheck size={20} /> },
+              { id: 'recycling', label: 'Recycling Help', icon: <Leaf size={20} /> },
+              // { id: 'tech', label: 'Technical Support', icon: <Settings size={20} /> }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setTicketType(item.id)}
+                className={`p-6 rounded-3xl border text-left transition-all flex flex-col gap-4 ${
+                  ticketType === item.id 
+                  ? 'bg-green-600 border-green-600 text-white shadow-xl translate-y-[-4px]' 
+                  : 'bg-white border-gray-100 text-gray-800 hover:border-green-400 hover:shadow-lg'
+                }`}
+              >
+                <div className={`${ticketType === item.id ? 'text-white' : 'text-green-600'}`}>
+                  {item.icon}
+                </div>
+                <span className="font-black text-sm uppercase tracking-wider">{item.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Conditional Ticket Form */}
+          {ticketType && (
+            <div className="bg-white p-8 rounded-[32px] border-2 border-green-600 animate-in zoom-in-95 duration-300">
+              <h4 className="font-black text-gray-900 mb-4 uppercase text-xs tracking-widest">Submit a {ticketType} Ticket</h4>
+              <div className="space-y-4">
+                <select className="w-full p-4 rounded-xl border border-gray-100 bg-gray-50 text-sm font-bold outline-none focus:ring-2 focus:ring-green-500">
+                  <option>Select Related Order</option>
+                  {orders?.map(o => (
+                    <option key={o?.orderId}>Order #{o?.orderId} - ₹{o?.totalAmount}</option>
+                  ))}
+                </select>
+                <textarea 
+                  placeholder="Describe your issue in detail..."
+                  className="w-full p-4 h-32 rounded-xl border border-gray-100 bg-gray-50 text-sm outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <button className="w-full py-4 bg-gray-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all">
+                  Submit Request
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* FAQ Section */}
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Frequent Questions</h4>
+            {[
+              { q: "How do I track my carbon savings?", a: "Carbon savings are calculated automatically based on the weight and type of eco-friendly products purchased." },
+              { q: "What items can I recycle via GreenChain?", a: "We currently accept all corrugated cardboard packaging and glass containers provided in your orders." }
+            ].map((faq, i) => (
+              <details key={i} className="group bg-white border border-gray-100 rounded-2xl">
+                <summary className="list-none p-6 flex justify-between items-center cursor-pointer font-bold text-gray-800">
+                  {faq?.q}
+                  <ChevronDown size={18} className="group-open:rotate-180 transition-transform" />
+                </summary>
+                <div className="px-6 pb-6 text-sm text-gray-500 leading-relaxed font-medium">
+                  {faq?.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Live Status & AI Chatbot */}
+        <div className="space-y-6">
+          {/* Live Agent Status */}
+          <div className="bg-gray-900 rounded-[32px] p-8 text-white relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-6">
+                <span className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-green-400">Agents Online</span>
+              </div>
+              <h4 className="text-2xl font-black tracking-tight mb-2 italic">Instant Connect</h4>
+              <p className="text-gray-400 text-xs mb-8 leading-relaxed">Average response time: <span className="text-white font-bold">2 minutes</span></p>
+              <button className="w-full py-4 bg-white text-gray-900 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-50 transition-all">
+                Start Live Chat
+              </button>
+            </div>
+            {/* Design Element */}
+            <div className="absolute -bottom-10 -right-10 opacity-10">
+              <HelpCircle size={150} />
+            </div>
+          </div>
+
+          {/* Support Ticket History (Mini) */}
+          <div className="bg-white p-8 rounded-[32px] border border-gray-100">
+            <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Recent Tickets</h4>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-black text-gray-900">#TK-8821</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase">Recycling Pickup</p>
+                </div>
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 text-[9px] font-black rounded-full uppercase">In Review</span>
+              </div>
+              <div className="h-[1px] bg-gray-50 w-full" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-black text-gray-900">#TK-8710</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase">Refund Processed</p>
+                </div>
+                <span className="px-3 py-1 bg-green-100 text-green-700 text-[9px] font-black rounded-full uppercase">Closed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+// --- Rest of your original components remain here (OrderList, OrderRow, SidebarLink, StatsSummary, StatCard) ---
+// (Ensure you keep them exactly as they were in your previous snippet)
 
 const OrderList = ({ orders, loading }) => (
   <div className="bg-white rounded-[32px] border border-gray-100 overflow-hidden">
@@ -108,7 +317,6 @@ const OrderRow = ({ order }) => {
 
   return (
     <div className={`group transition-all duration-500 ${isOpen ? 'bg-gray-50/50' : 'bg-white'}`}>
-      {/* Primary Interaction Area */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between p-10 cursor-pointer hover:px-12 transition-all duration-300"
@@ -130,7 +338,7 @@ const OrderRow = ({ order }) => {
           <div className="text-right">
             <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest block mb-1">Value</span>
             <span className="text-2xl font-black text-gray-900 tracking-tighter">
-              ₹{order?.totalAmount.toLocaleString()}
+              ₹{order?.totalAmount?.toLocaleString()}
             </span>
           </div>
           <div className={`h-10 w-10 rounded-full border border-gray-100 flex items-center justify-center transition-all ${isOpen ? 'bg-gray-900 border-gray-900 text-white' : 'text-gray-400'}`}>
@@ -139,7 +347,6 @@ const OrderRow = ({ order }) => {
         </div>
       </div>
 
-      {/* Product Detail "Glass" View */}
       {isOpen && (
         <div className="px-10 pb-10 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="bg-white border border-gray-100 rounded-[24px] shadow-2xl shadow-gray-200/50 overflow-hidden">
@@ -165,10 +372,6 @@ const OrderRow = ({ order }) => {
                 ))}
               </tbody>
             </table>
-            <div className="bg-gray-50/50 px-8 py-4 flex justify-between items-center">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Transaction Verified</span>
-              <span className="text-xs font-bold text-gray-900">Total Settlement: ₹{order?.totalAmount}</span>
-            </div>
           </div>
         </div>
       )}
@@ -180,7 +383,7 @@ const SidebarLink = ({ name, active, setter, icon }) => (
   <button
     onClick={() => setter(name)}
     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all cursor-pointer ${
-      active === name ? 'bg-white text-green-900 shadow-lg font-bold translate-x-2' : 'hover:bg-white/10'
+      active === name ? 'bg-white text-green-900 shadow-lg font-bold translate-x-2' : 'hover:bg-white/10 text-white'
     }`}
   >
     {icon} <span className="text-sm tracking-wide">{name}</span>
@@ -194,47 +397,11 @@ const StatsSummary = ({ orders = [] }) => {
 
   return (
     <div className="space-y-8">
-      {/* Primary Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard title="Capital Invested" value={`₹${totalSpent.toLocaleString()}`} label="Gross" />
         <StatCard title="Procured Units" value={totalItems} label="Volume" />
         <StatCard title="Average Value" value={`₹${Number(avgOrderValue).toLocaleString()}`} label="AOV" />
         <StatCard title="Active Logistics" value={orders.length} label="Transit" />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Large Data Module */}
-        <div className="lg:col-span-2 bg-white rounded-[32px] p-10 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] relative overflow-hidden">
-          <div className="relative z-10">
-            <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-10">Utilization Index</h3>
-            <div className="flex items-baseline gap-4">
-              <span className="text-7xl font-black text-gray-900 tracking-tighter italic">
-                {((totalSpent / 50000) * 100).toFixed(0)}%
-              </span>
-              <div className="space-y-1">
-                <p className="text-xs font-bold text-gray-500 uppercase">Monthly Capacity</p>
-                <div className="flex gap-1">
-                  {[...Array(10)].map((_, i) => (
-                    <div key={i} className={`h-1 w-4 rounded-full ${i < 6 ? 'bg-gray-900' : 'bg-gray-100'}`} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Subtle Geometric Background */}
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-gray-50 to-transparent pointer-events-none" />
-        </div>
-
-        {/* Action Canvas */}
-        <div className="bg-gray-900 rounded-[32px] p-10 text-white flex flex-col justify-between hover:bg-black transition-all duration-500 shadow-2xl shadow-gray-200 group">
-          <div className="space-y-2">
-            <div className="h-0.5 w-8 bg-white group-hover:w-16 transition-all duration-500" />
-            <h3 className="text-2xl font-light tracking-tight italic">System<br/>Overlook</h3>
-          </div>
-          <button className="w-full py-4 bg-white text-gray-900 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:tracking-[0.3em] transition-all">
-            Secure Marketplace
-          </button>
-        </div>
       </div>
     </div>
   );
@@ -248,11 +415,9 @@ const StatCard = ({ title, value, label }) => (
         <div className="h-1 w-1 bg-gray-200 rounded-full group-hover:scale-[3] group-hover:bg-gray-900 transition-all" />
       </div>
       <h4 className="text-gray-400 text-xs font-medium">{title}</h4>
-      <p className="text-4xl font-black text-gray-900 tracking-tighter leading-none">
-        {value}
-      </p>
+      <p className="text-4xl font-black text-gray-900 tracking-tighter leading-none">{value}</p>
     </div>
   </div>
-); 
+);
 
 export default UserDashboard;
