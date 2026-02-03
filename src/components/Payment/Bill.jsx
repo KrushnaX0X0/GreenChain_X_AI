@@ -3,23 +3,27 @@ import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import confetti from "canvas-confetti";
-import { 
-  Download, Printer, Home, CheckCircle, 
-  Leaf, MapPin, Phone, Hash 
+import {
+  Download, Printer, Home, CheckCircle,
+  Leaf, MapPin, Phone, Hash
 } from "lucide-react";
 
 import logo from "../../assets/bg.png";
 import signature from "../../assets/signature1.png";
 
+import { useLocation } from "react-router-dom"; // Add this import
+
 const Bill = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to get passed state
   const printRef = useRef();
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    // 1. Load data from the Razorpay success storage
-    const lastOrder = JSON.parse(localStorage.getItem("lastOrder"));
-    
+    // 1. Try to get order from navigation state first, then localStorage
+    const navOrder = location.state?.order;
+    const lastOrder = navOrder || JSON.parse(localStorage.getItem("lastOrder"));
+
     if (!lastOrder) {
       navigate("/");
       return;
@@ -27,14 +31,17 @@ const Bill = () => {
 
     setOrder(lastOrder);
 
-    // 2. Trigger Celebration
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#16a34a', '#4ade80', '#ffffff']
-    });
-  }, [navigate]);
+    // 2. Trigger Celebration only if it's a new order (from localStorage usually means just paid)
+    // If navigation state is present, maybe skip confetti or keep it. Let's keep it for fun.
+    if (!navOrder) { // Only play confetti for new checkouts (localStorage)
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#16a34a', '#4ade80', '#ffffff']
+      });
+    }
+  }, [navigate, location.state]);
 
   // --- FEATURE: DOWNLOAD AS PDF ---
   const downloadPDF = async () => {
@@ -71,7 +78,7 @@ const Bill = () => {
       </div>
 
       {/* INVOICE CONTAINER */}
-      <div 
+      <div
         ref={printRef}
         className="max-w-4xl mx-auto bg-white shadow-2xl rounded-[2rem] overflow-hidden border border-slate-100 mb-10"
       >
@@ -187,15 +194,15 @@ const Bill = () => {
 
           {/* SIGNATURE AREA */}
           <div className="mt-16 pt-10 border-t border-slate-50 flex justify-between items-center">
-             <div>
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Sustainability Note</p>
-                <p className="text-slate-400 text-[10px] font-medium max-w-[200px]">By choosing AgriMart, you saved 2.4kg of Carbon Emissions today. 🌱</p>
-             </div>
-             <div className="text-center">
-                <img src={signature} alt="Signature" className="w-32 mx-auto mix-blend-multiply opacity-80" />
-                <div className="h-[1px] bg-slate-200 w-40 mx-auto my-2" />
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operations Head</p>
-             </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Sustainability Note</p>
+              <p className="text-slate-400 text-[10px] font-medium max-w-[200px]">By choosing AgriMart, you saved 2.4kg of Carbon Emissions today. 🌱</p>
+            </div>
+            <div className="text-center">
+              <img src={signature} alt="Signature" className="w-32 mx-auto mix-blend-multiply opacity-80" />
+              <div className="h-[1px] bg-slate-200 w-40 mx-auto my-2" />
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operations Head</p>
+            </div>
           </div>
         </div>
       </div>

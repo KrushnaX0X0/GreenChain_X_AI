@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const OAuthSuccess = () => {
   const navigate = useNavigate();
@@ -12,10 +13,23 @@ const OAuthSuccess = () => {
     if (token) {
       // 2. Set the token in localStorage
       localStorage.setItem("token", token);
-      
-      // 3. Navigate to your dashboard
-      // We use replace: true so the user can't "Go Back" to the loading screen
-      navigate("/userdashbord", { replace: true });
+
+      // 3. Decode token to check for roles
+      try {
+        const decoded = jwtDecode(token);
+        const roles = decoded.roles || [];
+        const isAdmin = roles.includes("ROLE_ADMIN");
+
+        // 4. Navigate based on role
+        if (isAdmin) {
+          navigate("/dashbord", { replace: true });
+        } else {
+          navigate("/userdashbord", { replace: true });
+        }
+      } catch (e) {
+        console.error("Failed to decode token", e);
+        navigate("/userdashbord", { replace: true }); // Fallback
+      }
     } else {
       // If no token found, something went wrong, go back to login
       navigate("/login");

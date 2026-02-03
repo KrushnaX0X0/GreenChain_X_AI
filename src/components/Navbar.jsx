@@ -90,17 +90,6 @@ const Navbar = () => {
             <Link to="/services">Services</Link>
           </li>
 
-          {/* 🛒 Cart */}
-          {isLoggedIn && (
-            <li className="h-10 relative">
-              <Link to="/cart">
-                <i className="ri-shopping-cart-2-line text-xl"></i>
-              </Link>
-              <div className="bg-green-500 h-4 w-4 rounded-full flex justify-center items-center absolute top-[-6px] right-[-5px] text-[0.7em] text-white">
-                {cartCount}
-              </div>
-            </li>
-          )}
 
           {/* 🔐 Auth Section */}
           {!isLoggedIn ? (
@@ -113,57 +102,110 @@ const Navbar = () => {
               </li>
             </>
           ) : (
-                       
-                 <li className="relative group">
-  {/* Avatar Button */}
-  <div
-    className="h-10 w-10 rounded-full bg-gradient-to-br from-green-500 to-green-700
-               flex items-center justify-center text-white font-bold uppercase
-               cursor-pointer shadow-lg ring-2 ring-green-400/40
-               hover:scale-105 transition-all duration-200"
-  >
-    {user?.name?.charAt(0) || "U"}
-  </div>
+            <div className="flex items-center gap-6">
+              <li>
+                <Link to={user?.role === 'ROLE_ADMIN' ? "/dashbord" : "/userdashbord"}>Dashbord</Link>
+              </li>
 
-  {/* Dropdown */}
-  <div
-    className="absolute right-0 mt-3 w-60 opacity-0 scale-95
-               group-hover:opacity-100 group-hover:scale-100
-               transition-all duration-200 origin-top-right
-               bg-white/95 backdrop-blur-xl shadow-2xl
-               rounded-2xl overflow-hidden z-[99999]"
-  >
-    {/* User Info */}
-    <div className="px-6 py-4 border-b bg-gradient-to-r from-green-50 to-white">
-      <p className="text-sm font-semibold text-gray-900 truncate">
-        {user?.name}
-      </p>
-      <p className="text-xs text-green-600 font-medium mt-0.5">
-        {user?.role}
-      </p>
-    </div>
+             
 
-    {/* Menu */}
-    <div className="px-4 py-4">
-      <button
-        onClick={handleLogout}
-        className="w-full flex items-center justify-center gap-2
-                   bg-gradient-to-r from-red-500 to-red-600
-                   text-white py-2.5 rounded-xl
-                   hover:from-red-600 hover:to-red-700
-                   transition-all duration-200
-                   font-semibold shadow-md"
-      >
-        <i className="ri-logout-box-r-line text-lg"></i>
-        Logout
-      </button>
-    </div>
-  </div>
-</li>
 
+
+
+            </div>
+          )}
+
+          {/* 🛒 Cart */}
+          {isLoggedIn && (
+
+            <div className="flex items-center gap-6">
+            <li className="h-10 relative">
+              <Link to="/cart">
+                <i className="ri-shopping-cart-2-line text-xl"></i>
+              </Link>
+              <div className="bg-green-500 h-4 w-4 rounded-full flex justify-center items-center absolute top-[-6px] right-[-5px] text-[0.7em] text-white">
+                {cartCount}
+              </div>
+            </li>
+
+             <li className="relative group">
+                {/* Avatar Button */}
+                {/* Avatar with 3D Depth */}
+                <div
+                  className="h-11 w-11 rounded-2xl bg-white flex items-center justify-center 
+             text-emerald-900 font-black uppercase text-xs tracking-tighter
+             cursor-pointer shadow-[0_10px_20px_rgba(0,0,0,0.05)] border border-emerald-50
+             hover:shadow-[0_15px_30px_rgba(16,185,129,0.15)] hover:-translate-y-1 
+             transition-all duration-300 relative z-50 group"
+                >
+                  {user?.name?.charAt(0) || "U"}
+                  {/* Active Pulse Status */}
+                  <span className="absolute -bottom-1 -right-1 h-3 w-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                </div>
+
+                {/* Spatial Dropdown */}
+                <div
+                  className="absolute right-0 mt-4 w-64 opacity-0 scale-90 pointer-events-none
+             group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto
+             transition-all duration-500 origin-top-right
+             bg-white/80 backdrop-blur-2xl shadow-[0_30px_60px_rgba(6,78,59,0.12)]
+             rounded-[32px] border border-white overflow-hidden z-[99999]"
+                >
+                  {/* Header: Glassmorphic Minimalist */}
+                  <div className="px-7 py-6 bg-emerald-50/30">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em]">Verified Identity</span>
+                    </div>
+                    <p className="text-lg font-black text-emerald-950 tracking-tighter leading-none">
+                      {user?.name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="h-1 w-1 bg-emerald-400 rounded-full"></div>
+                      <p className="text-[9px] font-bold text-emerald-900/40 uppercase tracking-widest">
+                        {user?.role || "Member"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions Area */}
+                  <div className="p-3">
+                    {/* Optional: Profile Link */}
+                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl hover:bg-white transition-colors text-emerald-950/60 hover:text-emerald-950 group/item">
+                      <div className="h-8 w-8 rounded-xl bg-emerald-50 flex items-center justify-center group-hover/item:bg-emerald-100 transition-colors">
+                        <i className="ri-user-3-line text-emerald-600"></i>
+                      </div>
+                      <span className="text-[11px] font-black uppercase tracking-widest">Account Details</span>
+                    </button>
+
+                    <div className="h-[1px] bg-emerald-50 my-2 mx-4"></div>
+
+                    {/* Elegant Logout */}
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center justify-between px-5 py-4
+                 bg-emerald-950 text-white rounded-[22px]
+                 hover:bg-emerald-500 hover:shadow-xl hover:shadow-emerald-200
+                 transition-all duration-300 group/logout"
+                    >
+                      <span className="text-[10px] font-black uppercase tracking-[0.3em]">Terminate Session</span>
+                      <i className="ri-logout-circle-r-line text-lg group-hover/logout:translate-x-1 transition-transform"></i>
+                    </button>
+                  </div>
+
+                  {/* Bottom Subtle Tag */}
+                  <div className="py-3 text-center bg-emerald-50/20">
+                    <p className="text-[8px] font-bold text-emerald-900/20 uppercase tracking-[0.5em]">GreenChain Secure Node</p>
+                  </div>
+                </div>
+              </li>
 
               
+     
+     </div>
+
           )}
+
+
         </ul>
       </div>
     </div>

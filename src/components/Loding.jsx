@@ -3,8 +3,10 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 const Loding = () => {
+  const containerRef = React.useRef(null);
+
   useGSAP(() => {
-    
+
     gsap.fromTo(
       ".logo-font",
       { scale: 0.8, opacity: 0, y: 30 },
@@ -17,7 +19,7 @@ const Loding = () => {
       }
     );
 
-    
+
     gsap.to(".loader", {
       x: "150%",
       duration: 1.2,
@@ -27,15 +29,17 @@ const Loding = () => {
     });
   }, []);
 
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      gsap.to(".loader-container", {
+      gsap.to(containerRef.current, {
         opacity: 0,
         duration: 0.8,
         ease: "power2.out",
         onComplete: () => {
-          document.querySelector(".loader-container").style.display = "none";
+          if (containerRef.current) {
+            containerRef.current.style.display = "none";
+          }
         },
       });
     }, 2500);
@@ -43,7 +47,7 @@ const Loding = () => {
   }, []);
 
   return (
-    <div className="loader-container h-screen w-screen fixed top-0 left-0 bg-white flex items-center justify-center flex-col z-[99999999]">
+    <div ref={containerRef} className="loader-container h-screen w-screen fixed top-0 left-0 bg-white flex items-center justify-center flex-col z-[99999999]">
       <h1 className="logo-font text-5xl font-bold text-green-500 tracking-wide font">
         GreenChain
       </h1>
@@ -53,11 +57,10 @@ const Loding = () => {
       </div>
 
       <p className="mt-4 text-sm text-gray-500 tracking-wider animate-pulse font-medium">
-             Supply chain & fresh farm products 🌾
+        Supply chain & fresh farm products 🌾
       </p>
     </div>
   );
 };
 
 export default Loding;
-    

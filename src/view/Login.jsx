@@ -54,10 +54,19 @@ const Login = () => {
       localStorage.setItem("token", res.data.token);
       toast.success("Login successful! Welcome back");
 
+      const roles = res.data.roles || [];
+      const isAdmin = roles.includes("ROLE_ADMIN");
+      localStorage.setItem("role", isAdmin ? "ADMIN" : "USER");
+
       setTimeout(() => {
-        navigate("/userdashbord");
+        if (isAdmin) {
+          navigate("/dashbord");
+        } else {
+          navigate("/userdashbord");
+        }
       }, 1500);
     } catch (err) {
+      console.error(err);
       toast.error("Invalid email or password");
     } finally {
       setLoading(false);
@@ -67,7 +76,7 @@ const Login = () => {
   // 🔐 Google Login Handler (Added missing function)
   const handleGoogleLogin = () => {
     // Redirect to your backend Google Auth route
-    window.location.href = "http://localhost:8080/api/auth/google";
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
   useEffect(() => {
