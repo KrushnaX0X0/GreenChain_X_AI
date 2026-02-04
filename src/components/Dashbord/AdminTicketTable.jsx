@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { MessageSquare, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import UserInfoModal from './UserInfoModal';
+import TicketResponseModal from './TicketResponseModal';
 
 const AdminTicketTable = () => {
     const [tickets, setTickets] = useState([]);
@@ -26,7 +28,7 @@ const AdminTicketTable = () => {
             console.error(error);
             if (error.response?.status === 401) {
                 toast.error("Session expired. Please login again.");
-              
+
             } else {
                 toast.error("Failed to load tickets");
             }
@@ -34,6 +36,9 @@ const AdminTicketTable = () => {
             setLoading(false);
         }
     };
+
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedTicket, setSelectedTicket] = useState(null);
 
     const updateStatus = async (id, newStatus) => {
         const token = localStorage.getItem('token');
@@ -73,7 +78,18 @@ const AdminTicketTable = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900 text-sm">#{ticket.id} • {ticket.ticketType}</h4>
-                                    <p className="text-xs text-gray-500">by {ticket.user?.email || "Unknown User"}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <p className="text-xs text-gray-500">by {ticket.user?.email || "Unknown User"}</p>
+                                        {ticket.user && (
+                                            <button
+                                                onClick={() => setSelectedUserId(ticket.user.id)}
+                                                className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full hover:bg-blue-100 transition-colors font-medium flex items-center gap-1"
+                                                title="View User Details"
+                                            >
+                                                Info
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             <select
@@ -89,15 +105,49 @@ const AdminTicketTable = () => {
                         <p className="text-sm text-gray-600 leading-relaxed mb-4 pl-14">
                             {ticket.description}
                         </p>
-                        {ticket.order && (
-                            <div className="pl-14 text-xs font-mono text-gray-400">
-                                Ref: Order #{ticket.order.id}
+
+                        {ticket.adminResponse && (
+                            <div className="ml-14 mb-4 p-3 bg-green-50 border border-green-100 rounded-xl">
+                                <p className="text-xs font-bold text-green-700 uppercase mb-1">Admin Response</p>
+                                <p className="text-sm text-gray-700">{ticket.adminResponse}</p>
                             </div>
                         )}
+
+                        <div className="pl-14 flex items-center justify-between">
+                            {ticket.order && (
+                                <div className="text-xs font-mono text-gray-400">
+                                    Ref: Order #{ticket.order.id}
+                                </div>
+                            )}
+                            <button
+                                onClick={() => setSelectedTicket(ticket)}
+                                className="text-xs bg-green-50 text-green-600 px-3 py-1 rounded-full hover:bg-green-100 transition-colors font-medium"
+                            >
+                                Reply
+                            </button>
+                        </div>
                     </div>
                 ))}
                 {tickets.length === 0 && <p className="text-center text-gray-400 py-10">No active tickets</p>}
             </div>
+
+            {selectedUserId && (
+                <UserInfoModal
+                    userId={selectedUserId}
+                    onClose={() => setSelectedUserId(null)}
+                />
+            )}
+
+            {selectedTicket && (
+                <TicketResponseModal
+                    ticketId={selectedTicket.id}
+                    existingResponse={selectedTicket.adminResponse}
+                    onClose={() => setSelectedTicket(null)}
+                    onUpdate={(id, response) => {
+                        setTickets(prev => prev.map(t => t.id === id ? { ...t, adminResponse: response, status: 'IN_REVIEW' } : t));
+                    }}
+                />
+            )}
         </div>
     );
 };

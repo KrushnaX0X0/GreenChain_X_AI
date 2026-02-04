@@ -4,23 +4,31 @@ import { jwtDecode } from 'jwt-decode';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
     const token = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('role');
 
     if (!token) {
         return <Navigate to="/login" replace />;
     }
 
-    if (requiredRole) {
-        // 1. Check strict role match if "ADMIN" is required
-        // Note: Backend strictly checks "ROLE_ADMIN" or authorities.
-        // Frontend storedRole might be "ADMIN" or "USER" from Login.jsx logic.
+    try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
 
-        // Normalize logic: Login.jsx stores "ADMIN" or "USER".
-        // So we check against that.
-
-        if (requiredRole === 'ADMIN' && storedRole !== 'ADMIN') {
-            return <Navigate to="/" replace />; // Unauthorized
+        if (decoded.exp < currentTime) {
+            localStorage.clear();
+            return <Navigate to="/login" replace />;
         }
+
+        if (requiredRole === 'ADMIN') {
+            // Check if token has ROLE_ADMIN
+            const roles = decoded.roles || [];
+            if (!roles.includes('ROLE_ADMIN')) {
+                return <Navigate to="/" replace />;
+            }
+        }
+
+    } catch (error) {
+        localStorage.clear();
+        return <Navigate to="/login" replace />;
     }
 
     return children;

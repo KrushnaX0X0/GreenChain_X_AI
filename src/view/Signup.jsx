@@ -17,6 +17,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("USER");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -39,39 +40,40 @@ const Signup = () => {
   }, []);
 
   // 🔐 Register Handler
- const handleSignup = async () => {
-  if (!name || !email || !password || !confirmPassword) {
-    toast.error(" All fields are required");
-    return;
-  }
+  const handleSignup = async () => {
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error(" All fields are required");
+      return;
+    }
 
-  if (password !== confirmPassword) {
-    toast.error(" Passwords do not match");
-    return;
-  }
+    if (password !== confirmPassword) {
+      toast.error(" Passwords do not match");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    await axios.post("http://localhost:8080/api/auth/register", {
-      name,
-      email,
-      password,
-    });
+    try {
+      await axios.post("http://localhost:8080/api/auth/register", {
+        username: name,
+        email,
+        password,
+        role: [role]
+      });
 
-    toast.success(" Registration successful! Please login");
+      toast.success(" Registration successful! Please login");
 
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
-  } catch (err) {
-    toast.error(
-      err.response?.data?.message || "❌ Registration failed"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "❌ Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
@@ -134,6 +136,16 @@ const Signup = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
           className="w-full mb-6 p-3 rounded-md border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-500"
         />
+
+        {/* Role Selection */}
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          className="w-full mb-6 p-3 rounded-md border border-green-400 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+        >
+          <option value="USER">User (Customer)</option>
+          <option value="ADMIN">Admin (Seller/Manager)</option>
+        </select>
 
         {/* Signup Button */}
         <button

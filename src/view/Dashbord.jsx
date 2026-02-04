@@ -14,6 +14,8 @@ import UserTable from "../components/Dashbord/UserTable";
 import AdminTicketTable from "../components/Dashbord/AdminTicketTable";
 import Navbar from "../components/Navbar"
 
+import Logout from "../components/Dashbord/Logout";
+
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const mainRef = useRef();
@@ -26,13 +28,7 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  useEffect(() => {
-    if (activeSection === "logout") {
-      localStorage.clear();
-      toast.success("Logged out successfully");
-      navigate("/");
-    }
-  }, [activeSection, navigate]);
+
 
   useGSAP(() => {
     gsap.from(mainRef.current, {
@@ -64,6 +60,8 @@ const Dashboard = () => {
         return <UserTable />;
       case "tickets":
         return <AdminTicketTable />;
+      case "logout":
+        return <Logout setActiveSection={setActiveSection} />;
       default:
         return <Overview />;
     }

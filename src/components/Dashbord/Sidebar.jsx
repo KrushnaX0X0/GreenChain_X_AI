@@ -6,7 +6,7 @@ const Sidebar = ({ setActiveSection }) => {
     { label: "All Orders", value: "orders", icon: <FaClipboardList /> },
     { label: "My Products", value: "products", icon: <FaBoxOpen /> },
     { label: "Add Product", value: "addproduct", icon: <FaPlusCircle /> },
-    { label: "Users", value: "users", icon: <FaUsers /> },
+    // { label: "Users", value: "users", icon: <FaUsers /> },
     { label: "Support", value: "tickets", icon: <FaHeadset /> },
     { label: "AI Crop Advisor", value: "ai", icon: <FaRobot /> },
     // { label: "Weather", value: "weather", icon: <FaCloudSun /> },

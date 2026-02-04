@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import { Link, useNavigate } from "react-router-dom"; // Cleaned up duplicate import
 import axios from "axios";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -79,16 +80,33 @@ const Login = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
   };
 
+
+
+  // ... (existing imports)
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
     if (token) {
       localStorage.setItem("token", token);
-      navigate("/userdashbord");
+      try {
+        const decoded = jwtDecode(token);
+        const roles = decoded.roles || [];
+        const isAdmin = roles.includes("ROLE_ADMIN");
+
+        localStorage.setItem("role", isAdmin ? "ADMIN" : "USER");
+
+        if (isAdmin) {
+          navigate("/dashbord");
+        } else {
+          navigate("/userdashbord");
+        }
+      } catch (e) {
+        console.error("Token decode failed", e);
+        navigate("/userdashbord");
+      }
     }
-    // Removed the "else { navigate('/login') }" because it causes 
-    // an infinite redirect loop if you are already on the login page.
   }, [navigate]);
 
   return (

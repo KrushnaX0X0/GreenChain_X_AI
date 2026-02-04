@@ -351,7 +351,17 @@ const SupportFeature = ({ orders }) => {
                         {ticket.status}
                       </span>
                     </div>
-                    <div className="h-[1px] bg-gray-50 w-full my-2" />
+
+                    {
+                      ticket.adminResponse && (
+                        <div className="mt-3 p-3 bg-green-50 rounded-xl border border-green-100">
+                          <p className="text-[9px] font-black text-green-600 uppercase mb-1">Response from Support</p>
+                          <p className="text-xs text-gray-700 font-medium leading-relaxed">{ticket.adminResponse}</p>
+                        </div>
+                      )
+                    }
+
+                    < div className="h-[1px] bg-gray-50 w-full my-2" />
                   </div>
                 ))
               )}
@@ -365,7 +375,7 @@ const SupportFeature = ({ orders }) => {
         </div>
 
       </div>
-    </div>
+    </div >
   );
 };
 

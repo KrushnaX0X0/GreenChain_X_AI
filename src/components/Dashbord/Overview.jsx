@@ -98,8 +98,8 @@ const Overview = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-b border-gray-50 last:border-none hover:bg-gray-50/50 transition-colors">
+                {recentOrders.map((order, index) => (
+                  <tr key={order.id || `order-${index}`} className="border-b border-gray-50 last:border-none hover:bg-gray-50/50 transition-colors">
                     <td className="py-4 text-sm font-bold text-gray-700">#{order.id}</td>
                     <td className="py-4 text-sm text-gray-600">{order.user?.email || "Guest"}</td>
                     <td className="py-4 text-sm font-medium text-gray-800">₹{order.totalAmount}</td>
@@ -112,7 +112,7 @@ const Overview = () => {
                     </td>
                   </tr>
                 ))}
-                {recentOrders.length === 0 && <tr><td colSpan="4" className="text-center py-4 text-gray-400">No recent orders</td></tr>}
+                {recentOrders.length === 0 && <tr key="no-orders"><td colSpan="4" className="text-center py-4 text-gray-400">No recent orders</td></tr>}
               </tbody>
             </table>
           </div>
