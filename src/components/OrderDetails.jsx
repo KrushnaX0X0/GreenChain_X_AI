@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from 'axios';
 import { toast } from "react-toastify";
 import { ChevronLeft, CreditCard, User, PackageCheck } from "lucide-react";
 
@@ -53,9 +53,9 @@ const OrderDetails = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/api/orders",
+        `${import.meta.env.VITE_API_URL}/api/orders`,
         orderData,
-        { headers: getAuthHeader() } // ⬅️ Token sent here
+        { headers: getAuthHeader() }
       );
 
       return response.data;
@@ -70,9 +70,9 @@ const OrderDetails = () => {
     try {
       // 1. Create Order on Backend
       const { data } = await axios.post(
-        "http://localhost:8080/api/payments/create",
+        `${import.meta.env.VITE_API_URL}/api/payments/create`,
         { amount: total },
-        { headers: getAuthHeader() } // ⬅️ Token sent here
+        { headers: getAuthHeader() }
       );
 
       const options = {
@@ -88,13 +88,13 @@ const OrderDetails = () => {
           try {
             // 2. Verify Payment
             await axios.post(
-              "http://localhost:8080/api/payments/verify",
+              `${import.meta.env.VITE_API_URL}/api/payments/verify`,
               {
                 razorpayOrderId: response.razorpay_order_id,
                 razorpayPaymentId: response.razorpay_payment_id,
                 razorpaySignature: response.razorpay_signature,
               },
-              { headers: getAuthHeader() } // ⬅️ Token sent here
+              { headers: getAuthHeader() }
             );
 
             // 3. Save Order
@@ -120,11 +120,11 @@ const OrderDetails = () => {
   return (
     <div className="min-h-screen bg-[#F8FDF9] pt-28 pb-20 px-6">
       <div className="max-w-5xl mx-auto">
-        
+
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div>
-            <button 
+            <button
               onClick={() => navigate("/cart")}
               className="flex items-center gap-2 text-emerald-600 font-bold text-xs uppercase tracking-widest mb-4 hover:gap-4 transition-all"
             >
@@ -146,7 +146,7 @@ const OrderDetails = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          
+
           {/* Left: Customer Bento Box */}
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-white p-8 rounded-[40px] border border-emerald-50 shadow-sm relative overflow-hidden">
@@ -172,9 +172,9 @@ const OrderDetails = () => {
           {/* Right: Item List Bento Box */}
           <div className="lg:col-span-2 bg-emerald-950 text-white p-10 rounded-[50px] shadow-2xl shadow-emerald-900/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            
+
             <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-8">Manifest Details</h2>
-            
+
             <div className="space-y-6 relative z-10">
               {order.map((item) => (
                 <div key={item.id} className="flex justify-between items-center border-b border-white/10 pb-4">

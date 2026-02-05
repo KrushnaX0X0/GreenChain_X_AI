@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from 'axios';
 import { toast } from "react-hot-toast";
 
 const AddProduct = () => {
@@ -9,6 +9,7 @@ const AddProduct = () => {
     stock: "",
     unit: "",
     imageUrl: "",
+    category: "",
   });
 
   const handleChange = (e) => {
@@ -19,16 +20,9 @@ const AddProduct = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/products`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/products`, formData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       toast.success("Product added successfully!");
       setFormData({
         name: "",
@@ -36,6 +30,7 @@ const AddProduct = () => {
         stock: "",
         unit: "",
         imageUrl: "",
+        category: "",
       });
     } catch (error) {
       console.error("Error adding product:", error);
@@ -79,6 +74,15 @@ const AddProduct = () => {
           name="unit"
           placeholder="Unit (e.g., kg, piece)"
           value={formData.unit}
+          onChange={handleChange}
+          className="border p-2 rounded"
+          required
+        />
+        <input
+          type="text"
+          name="category"
+          placeholder="Category"
+          value={formData.category}
           onChange={handleChange}
           className="border p-2 rounded"
           required

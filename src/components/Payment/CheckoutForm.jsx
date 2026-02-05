@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from 'axios';
 import {
   ShieldCheck, CreditCard, MapPin,
   Phone, User, ChevronLeft, Zap, Smartphone
@@ -56,9 +56,9 @@ const CheckoutForm = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/api/orders",
+        `${import.meta.env.VITE_API_URL}/api/orders`,
         orderData,
-        { headers: getAuthHeader() } // ⬅️ Authorization added
+        { headers: getAuthHeader() }
       );
       return response.data;
     } catch (error) {
@@ -78,7 +78,7 @@ const CheckoutForm = () => {
       };
 
       const { data: order } = await axios.post(
-        "http://localhost:8080/api/payments/create",
+        `${import.meta.env.VITE_API_URL}/api/payments/create`,
         orderRequest,
         { headers: getAuthHeader() }
       );

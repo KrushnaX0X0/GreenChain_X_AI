@@ -21,7 +21,7 @@ const UserDashboard = () => {
     const fetchOrders = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await axios.get('http://localhost:8080/api/orders/my-orders', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders/my-orders`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setOrders(Array.isArray(response.data) ? response.data : []);
@@ -41,9 +41,10 @@ const UserDashboard = () => {
 
   const handleDeleteOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return;
+    const token = localStorage.getItem('token');
+
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:8080/api/orders/my-orders/${orderId}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/orders/my-orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrders(prev => prev.filter(o => o.orderId !== orderId));
@@ -190,7 +191,7 @@ const SupportFeature = ({ orders }) => {
   const fetchTickets = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:8080/api/support/tickets/my-tickets', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/support/tickets/my-tickets`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTickets(response.data);
@@ -204,7 +205,7 @@ const SupportFeature = ({ orders }) => {
     setSubmitting(true);
     const token = localStorage.getItem('token');
     try {
-      await axios.post('http://localhost:8080/api/support/tickets', {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/support/tickets`, {
         ticketType: ticketType,
         orderId: formData.orderId ? parseInt(formData.orderId) : null,
         description: formData.description
@@ -220,6 +221,21 @@ const SupportFeature = ({ orders }) => {
       toast.error("Failed to create ticket.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleDeleteTicket = async (ticketId) => {
+    if (!window.confirm("Are you sure you want to delete this ticket?")) return;
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/support/tickets/${ticketId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTickets(prev => prev.filter(t => t.id !== ticketId));
+      toast.success("Ticket deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete ticket", error);
+      toast.error("Failed to delete ticket");
     }
   };
 
@@ -344,12 +360,21 @@ const SupportFeature = ({ orders }) => {
                         <p className="text-xs font-black text-gray-900">#TK-{ticket.id}</p>
                         <p className="text-[10px] text-gray-400 font-bold uppercase">{ticket.ticketType}</p>
                       </div>
-                      <span className={`px-3 py-1 text-[9px] font-black rounded-full uppercase ${ticket.status === 'CLOSED' ? 'bg-green-100 text-green-700' :
-                        ticket.status === 'IN_REVIEW' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-blue-100 text-blue-700'
-                        }`}>
-                        {ticket.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1 text-[9px] font-black rounded-full uppercase ${ticket.status === 'CLOSED' ? 'bg-green-100 text-green-700' :
+                          ticket.status === 'IN_REVIEW' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-blue-100 text-blue-700'
+                          }`}>
+                          {ticket.status}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteTicket(ticket.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                          title="Delete Ticket"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
 
                     {
@@ -597,7 +622,7 @@ const ProfileSettings = () => {
   const fetchProfile = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.get('http://localhost:8080/api/users/profile', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile(res.data);
@@ -612,7 +637,7 @@ const ProfileSettings = () => {
     setSaving(true);
     const token = localStorage.getItem('token');
     try {
-      await axios.put('http://localhost:8080/api/users/profile', profile, {
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile`, profile, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success("Profile Updated Successfully!");

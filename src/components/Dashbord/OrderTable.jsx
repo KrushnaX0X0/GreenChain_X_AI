@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from 'axios';
 import { toast } from "react-toastify";
 import { FaTrash, FaSearch } from "react-icons/fa";
 
@@ -13,12 +13,10 @@ const OrderTable = () => {
     }, []);
 
     const fetchOrders = async () => {
+        const token = localStorage.getItem('token');
         try {
-            const token = localStorage.getItem("token");
-            const res = await axios.get("http://localhost:8080/api/orders/all", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orders/all`, {
+                headers: { Authorization: `Bearer ${token}` }
             });
             setOrders(res.data);
         } catch (error) {
@@ -30,9 +28,9 @@ const OrderTable = () => {
     };
 
     const handleStatusChange = async (id, newStatus) => {
+        const token = localStorage.getItem('token');
         try {
-            const token = localStorage.getItem("token");
-            await axios.put(`http://localhost:8080/api/orders/${id}/status`, { status: newStatus }, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/orders/${id}/status`, { status: newStatus }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Order status updated");
@@ -46,9 +44,9 @@ const OrderTable = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this order?")) return;
 
+        const token = localStorage.getItem('token');
         try {
-            const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:8080/api/orders/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/orders/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Order deleted");
@@ -122,8 +120,8 @@ const OrderTable = () => {
                                     <td className="p-4">
                                         <select
                                             className={`px-2 py-1 rounded-full text-xs font-semibold border-none focus:ring-2 focus:ring-green-400 cursor-pointer ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                                                    order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                                        'bg-yellow-100 text-yellow-700'
+                                                order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                    'bg-yellow-100 text-yellow-700'
                                                 }`}
                                             value={order.status || 'Pending'}
                                             onChange={(e) => handleStatusChange(order.orderId, e.target.value)}

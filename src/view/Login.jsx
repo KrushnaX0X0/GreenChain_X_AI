@@ -47,7 +47,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:8080/api/auth/login", {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
         email,
         password,
       });
@@ -77,7 +77,7 @@ const Login = () => {
   // 🔐 Google Login Handler (Added missing function)
   const handleGoogleLogin = () => {
     // Redirect to your backend Google Auth route
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/google`;
   };
 
 

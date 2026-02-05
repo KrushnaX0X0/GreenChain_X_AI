@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from 'axios';
 import { FaShoppingCart, FaBoxOpen, FaUsers, FaMoneyBillWave, FaExclamationTriangle } from "react-icons/fa";
 
 const Overview = () => {
@@ -22,13 +22,9 @@ const Overview = () => {
     try {
       // 1. Fetch All Data in Parallel
       const [productsRes, ordersRes, usersRes] = await Promise.all([
-        axios.get("http://localhost:8080/api/products"),
-        axios.get("http://localhost:8080/api/orders/all", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get("http://localhost:8080/api/users", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/products`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/orders/all`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/users`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
       // 2. Process Products

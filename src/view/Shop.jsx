@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import gsap from "gsap";
 import {
-  Search, Leaf, Heart, Sparkles, MoveRight, 
+  Search, Leaf, Heart, Sparkles, MoveRight,
   Star, ShoppingBag, Plus, ArrowUpRight
 } from "lucide-react";
 
@@ -34,14 +34,8 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoadingProducts(true);
-      const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("http://localhost:8080/api/products", {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-            "Content-Type": "application/json"
-          }
-        });
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
         if (Array.isArray(res.data)) setProducts(res.data);
       } catch (err) {
         toast.error("Connection failed.");
@@ -147,7 +141,7 @@ const Shop = () => {
                 <div key={product.id} className="product-card group relative">
                   {/* Premium Card Container */}
                   <div className="bg-white rounded-[2.5rem] p-3 border border-emerald-50/50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_40px_80px_-15px_rgba(6,78,59,0.12)] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] flex flex-col h-full overflow-hidden">
-                    
+
                     {/* Visual Asset Area */}
                     <div className="relative aspect-square rounded-[2rem] bg-gradient-to-br from-gray-50 to-emerald-50/30 overflow-hidden flex items-center justify-center group-hover:bg-emerald-50 transition-colors duration-700">
                       <img
@@ -156,7 +150,7 @@ const Shop = () => {
                         className="w-4/5 h-4/5 object-contain group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)]"
                         onError={(e) => { e.target.src = "https://via.placeholder.com/300?text=Farm+Item"; }}
                       />
-                      
+
                       {/* Top Overlay Actions */}
                       <div className="absolute top-4 inset-x-4 flex justify-between items-start">
                         <div className={`px-3 py-1.5 rounded-full backdrop-blur-md border flex items-center gap-1.5 ${product.stock > 0 ? 'bg-white/80 border-white/50' : 'bg-red-50/80 border-red-100'}`}>
@@ -173,7 +167,7 @@ const Shop = () => {
                       {/* Detail Trigger - Bottom Right */}
                       <div className="absolute bottom-4 right-4 translate-y-12 group-hover:translate-y-0 transition-transform duration-500">
                         <div className="w-10 h-10 rounded-full bg-emerald-950 flex items-center justify-center text-white shadow-xl shadow-emerald-900/20">
-                           <ArrowUpRight size={18} />
+                          <ArrowUpRight size={18} />
                         </div>
                       </div>
                     </div>
@@ -189,27 +183,26 @@ const Shop = () => {
                           <span className="text-[10px] font-bold text-emerald-900">{product.rating || "4.9"}</span>
                         </div>
                       </div>
-                      
+
                       <h3 className="text-xl font-extrabold text-emerald-950 tracking-tight mb-4 group-hover:text-emerald-600 transition-colors">
                         {product.name}
                       </h3>
-                      
+
                       <div className="mt-auto flex items-center justify-between gap-4">
                         <div className="flex flex-col">
                           <span className="text-[9px] font-bold text-emerald-300 uppercase tracking-tighter">Market Rate / {product.unit}</span>
                           <span className="text-2xl font-black text-emerald-950 tracking-tighter">₹{product.price}</span>
                         </div>
-                        
+
                         <button
                           onClick={() => addToCart(product)}
                           disabled={product.stock === 0 || isInCart}
-                          className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 transition-all duration-500 ${
-                            isInCart 
-                            ? "bg-emerald-50 text-emerald-600 font-bold text-sm border border-emerald-100" 
-                            : product.stock > 0 
-                              ? "bg-emerald-950 text-white hover:bg-emerald-500 hover:-translate-y-1 font-bold shadow-lg shadow-emerald-900/10" 
+                          className={`flex-1 h-14 rounded-2xl flex items-center justify-center gap-2 transition-all duration-500 ${isInCart
+                            ? "bg-emerald-50 text-emerald-600 font-bold text-sm border border-emerald-100"
+                            : product.stock > 0
+                              ? "bg-emerald-950 text-white hover:bg-emerald-500 hover:-translate-y-1 font-bold shadow-lg shadow-emerald-900/10"
                               : "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          }`}
+                            }`}
                         >
                           {isInCart ? (
                             <><ShoppingBag size={18} /> Cart</>

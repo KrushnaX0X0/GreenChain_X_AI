@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { MessageSquare, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { MessageSquare, AlertCircle, CheckCircle, Clock, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import UserInfoModal from './UserInfoModal';
 import TicketResponseModal from './TicketResponseModal';
@@ -15,12 +15,8 @@ const AdminTicketTable = () => {
 
     const fetchTickets = async () => {
         const token = localStorage.getItem('token');
-        if (!token) {
-            toast.error("No access token found. Please login.");
-            return;
-        }
         try {
-            const res = await axios.get("http://localhost:8080/api/support/tickets/all", {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/support/tickets/all`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setTickets(res.data);
@@ -43,7 +39,7 @@ const AdminTicketTable = () => {
     const updateStatus = async (id, newStatus) => {
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:8080/api/support/tickets/${id}/status`, null, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/support/tickets/${id}/status`, null, {
                 params: { status: newStatus },
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -51,6 +47,20 @@ const AdminTicketTable = () => {
             toast.success("Ticket status updated");
         } catch (error) {
             toast.error("Failed to update status");
+        }
+    };
+
+    const deleteTicket = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this ticket?")) return;
+        const token = localStorage.getItem('token');
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/support/tickets/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setTickets(prev => prev.filter(t => t.id !== id));
+            toast.success("Ticket deleted successfully");
+        } catch (error) {
+            toast.error("Failed to delete ticket");
         }
     };
 
@@ -92,15 +102,24 @@ const AdminTicketTable = () => {
                                     </div>
                                 </div>
                             </div>
-                            <select
-                                value={ticket.status}
-                                onChange={(e) => updateStatus(ticket.id, e.target.value)}
-                                className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer border-none ${getStatusColor(ticket.status)}`}
-                            >
-                                <option value="OPEN">Open</option>
-                                <option value="IN_REVIEW">In Review</option>
-                                <option value="CLOSED">Closed</option>
-                            </select>
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={ticket.status}
+                                    onChange={(e) => updateStatus(ticket.id, e.target.value)}
+                                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest outline-none cursor-pointer border-none ${getStatusColor(ticket.status)}`}
+                                >
+                                    <option value="OPEN">Open</option>
+                                    <option value="IN_REVIEW">In Review</option>
+                                    <option value="CLOSED">Closed</option>
+                                </select>
+                                <button
+                                    onClick={() => deleteTicket(ticket.id)}
+                                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                    title="Delete Ticket"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
+                            </div>
                         </div>
                         <p className="text-sm text-gray-600 leading-relaxed mb-4 pl-14">
                             {ticket.description}

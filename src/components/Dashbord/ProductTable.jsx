@@ -1,5 +1,7 @@
 import React from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2, Edit, ChevronLeft, ChevronRight, Search, Pencil } from "lucide-react";
+import toast from "react-hot-toast";
+import axios from 'axios';
 import EditProductModal from "./EditProductModal";
 
 const ProductTable = () => {
@@ -13,10 +15,8 @@ const ProductTable = () => {
 
   const fetchProducts = async () => {
     try {
-      // Assuming public endpoint or using token if needed
-      const res = await fetch("http://localhost:8080/api/products");
-      const data = await res.json();
-      setProducts(data);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+      setProducts(res.data);
     } catch (error) {
       console.error("Failed to fetch products", error);
     } finally {
@@ -32,15 +32,14 @@ const ProductTable = () => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
     const token = localStorage.getItem("token");
     try {
-      await fetch(`http://localhost:8080/api/products/${id}`, {
-        method: "DELETE",
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/products/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(prev => prev.filter(p => p.id !== id));
-      // toast.success("Product deleted"); 
+      toast.success("Product deleted");
     } catch (error) {
       console.error("Delete failed", error);
-      // toast.error("Failed to delete");
+      toast.error("Failed to delete");
     }
   };
 

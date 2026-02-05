@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, Upload } from "lucide-react";
-import axios from "axios";
+import axios from 'axios';
 import toast from "react-hot-toast";
 
 const EditProductModal = ({ product, onClose, onUpdate }) => {
@@ -9,7 +9,8 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
         price: "",
         unit: "",
         stock: "",
-        imageUrl: ""
+        imageUrl: "",
+        category: ""
     });
     const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,8 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
                 price: product.price,
                 unit: product.unit,
                 stock: product.stock,
-                imageUrl: product.imageUrl || ""
+                imageUrl: product.imageUrl || "",
+                category: product.category || ""
             });
         }
     }, [product]);
@@ -32,16 +34,9 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            toast.error("No access token found. Please login.");
-            setLoading(false);
-            return;
-        }
-
+        const token = localStorage.getItem('token');
         try {
-            const res = await axios.put(`http://localhost:8080/api/products/${product.id}`, formData, {
+            const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/products/${product.id}`, formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Product Updated Successfully");
@@ -122,16 +117,28 @@ const EditProductModal = ({ product, onClose, onUpdate }) => {
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Image URL</label>
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Category</label>
                             <input
                                 type="text"
-                                name="imageUrl"
-                                value={formData.imageUrl}
+                                name="category"
+                                value={formData.category}
                                 onChange={handleChange}
-                                className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium text-gray-600 text-sm"
-                                placeholder="https://..."
+                                className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 font-bold text-gray-800"
+                                required
                             />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">Image URL</label>
+                        <input
+                            type="text"
+                            name="imageUrl"
+                            value={formData.imageUrl}
+                            onChange={handleChange}
+                            className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 font-medium text-gray-600 text-sm"
+                            placeholder="https://..."
+                        />
                     </div>
 
                     <div className="pt-4 flex justify-end gap-3">

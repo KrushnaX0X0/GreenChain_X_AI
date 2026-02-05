@@ -16,7 +16,7 @@ const UserTable = () => {
         if (!token) return;
 
         try {
-            const res = await axios.get("http://localhost:8080/api/users", {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(res.data);
@@ -38,7 +38,7 @@ const UserTable = () => {
 
         const token = localStorage.getItem('token');
         try {
-            await axios.delete(`http://localhost:8080/api/users/${id}`, {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(prev => prev.filter(u => u.id !== id));

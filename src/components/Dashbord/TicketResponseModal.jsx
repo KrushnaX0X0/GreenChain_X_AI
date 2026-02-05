@@ -16,11 +16,10 @@ const TicketResponseModal = ({ ticketId, existingResponse, onClose, onUpdate }) 
         setSubmitting(true);
         const token = localStorage.getItem('token');
         try {
-            await axios.put(`http://localhost:8080/api/support/tickets/${ticketId}/respond`, response, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'text/plain'
-                }
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/support/tickets/${ticketId}/respond`, {
+                response: response
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
             });
             toast.success("Response sent successfully!");
             onUpdate(ticketId, response);
