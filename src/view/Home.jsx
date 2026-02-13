@@ -2,6 +2,7 @@ import React from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Hero from "../components/Hero";
 import Categoery from "../components/Categoery";
 import Thired from "../components/Thired";
@@ -34,6 +35,8 @@ const Home = () => {
 
       {/* 🤖 Show chatbot ONLY if logged in */}
       {isLoggedIn && <AgriChatbot />}
+
+      <Footer />
     </>
   );
 };

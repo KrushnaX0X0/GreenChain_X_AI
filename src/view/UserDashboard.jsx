@@ -4,7 +4,8 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
   LayoutDashboard, ShoppingBag, LogOut, ChevronDown, ChevronUp,
-  Package, MapPin, Leaf, ShieldCheck, HelpCircle, Trophy, Recycle, Settings as SettingsIcon, Heart, Trash2, FileText
+  Package, MapPin, Leaf, ShieldCheck, HelpCircle, Trophy, Recycle, Settings as SettingsIcon, Heart, Trash2, FileText,
+  Sprout, MessageSquare, Send, Loader2
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -64,6 +65,8 @@ const UserDashboard = () => {
         <nav className="flex-1 px-3 mt-20 space-y-1">
           <SidebarLink name="Dashboard" active={activeTab} setter={setActiveTab} icon={<LayoutDashboard size={18} />} />
           <SidebarLink name="My Orders" active={activeTab} setter={setActiveTab} icon={<ShoppingBag size={18} />} />
+          <SidebarLink name="Wishlist" active={activeTab} setter={setActiveTab} icon={<Heart size={18} />} />
+          <SidebarLink name="Smart Shopping" active={activeTab} setter={setActiveTab} icon={<Sprout size={18} />} />
           <SidebarLink name="Eco Impact" active={activeTab} setter={setActiveTab} icon={<Leaf size={18} />} />
           <SidebarLink name="Support" active={activeTab} setter={setActiveTab} icon={<HelpCircle size={18} />} />
         </nav>
@@ -84,18 +87,27 @@ const UserDashboard = () => {
         <div className="p-10 overflow-y-auto">
           {activeTab === 'Dashboard' && (
             <>
-              <StatsSummary orders={orders} />
+              <div className="mb-8">
+                <h2 className="text-4xl font-black text-gray-900 tracking-tighter mb-4">Welcome Back!</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  <div className="lg:col-span-2">
+                    <StatsSummary orders={orders} />
+                  </div>
+                  {/* <div className="lg:col-span-1">
+                    <Weather />
+                  </div> */}
+                </div>
+              </div>
               <div className="mt-8">
                 <SustainabilityFeatures />
               </div>
             </>
           )}
           {activeTab === 'My Orders' && <OrderList orders={orders} loading={loading} onDelete={handleDeleteOrder} />}
-          {activeTab === 'Farm Insights' && <FarmInsights />}
+          {activeTab === 'Wishlist' && <WishlistComponent />}
+          {activeTab === 'Smart Shopping' && <SmartShoppingFeatures />}
           {activeTab === 'Eco Impact' && <EcoImpactDetailed orders={orders} />}
           {activeTab === 'Support' && <SupportFeature />}
-          {activeTab === 'Settings' && <ProfileSettings />}
-          {activeTab === 'Wishlist' && <WishlistComponent />}
         </div>
       </main>
     </div>
@@ -605,110 +617,193 @@ const StatCard = ({ title, value, label }) => (
 
 export default UserDashboard;
 
-const ProfileSettings = () => {
-  const [profile, setProfile] = useState({
-    username: '',
-    email: '',
-    mobile: '',
-    address: ''
-  });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+// --- NEW FEATURE: Smart Shopping Features (AI) ---
+
+const SmartShoppingFeatures = () => {
+  const [chatHistory, setChatHistory] = useState([
+    { role: 'ai', text: "Hello! I'm your Smart Shopping Assistant. Ask me about product quality, storage tips, nutritional info, or anything else!" }
+  ]);
+  const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const chatEndRef = React.useRef(null);
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    scrollToBottom();
+  }, [chatHistory]);
 
-  const fetchProfile = async () => {
-    const token = localStorage.getItem('token');
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const sendMessage = async (customMessage = null) => {
+    const msgText = customMessage || message;
+    if (!msgText.trim()) return;
+
+    const userMsg = { role: 'user', text: msgText };
+    setChatHistory(prev => [...prev, userMsg]);
+    setMessage('');
+    setSending(true);
+
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const token = localStorage.getItem('token');
+      // If token is missing, we can still try, or prompt login. OpenRouter is free on backend anyway?
+      // Assuming backend requires token for security context.
+
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ai/chat`, msgText, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'text/plain'
+        }
       });
-      setProfile(res.data);
+
+      setChatHistory(prev => [...prev, { role: 'ai', text: res.data }]);
     } catch (error) {
-      console.error("Failed to fetch profile", error);
+      console.error("Chat failed", error);
+      let errorMsg = "I'm having trouble connecting right now. Please try again later.";
+      if (error.response && error.response.status === 403) {
+        errorMsg = "Please log in to use the assistant.";
+      }
+      setChatHistory(prev => [...prev, { role: 'ai', text: errorMsg }]);
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    const token = localStorage.getItem('token');
-    try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile`, profile, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      toast.success("Profile Updated Successfully!");
-    } catch (error) {
-      console.error("Failed to update profile", error);
-      toast.error("Failed to update profile.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (loading) return <div className="p-20 text-center text-gray-500">Loading Profile...</div>;
+  const suggestions = [
+    "How to pick a ripe mango?",
+    "Difference between organic and inorganic?",
+    "Best way to store leafy greens?",
+    "Nutritional benefits of quinoa"
+  ];
 
   return (
-    <div className="max-w-3xl animate-in slide-in-from-right duration-500">
-      <header className="mb-8">
-        <h2 className="text-[10px] font-black text-green-600 uppercase tracking-[0.3em] mb-2">Account</h2>
-        <h3 className="text-4xl font-black text-gray-900 tracking-tighter">Profile Settings</h3>
-      </header>
-
-      <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Display Name</label>
-            <input
-              type="text"
-              value={profile.username}
-              onChange={(e) => setProfile({ ...profile, username: e.target.value })}
-              className="w-full p-4 rounded-xl border border-gray-100 bg-gray-50 font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Email Address</label>
-            <input
-              type="text"
-              value={profile.email}
-              disabled
-              className="w-full p-4 rounded-xl border border-gray-100 bg-gray-100 font-bold text-gray-500 cursor-not-allowed"
-            />
-            <p className="text-[10px] text-gray-400 italic px-2">Email cannot be changed completely.</p>
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Mobile Number</label>
-            <input
-              type="text"
-              placeholder="+91 00000 00000"
-              value={profile.mobile || ''}
-              onChange={(e) => setProfile({ ...profile, mobile: e.target.value })}
-              className="w-full p-4 rounded-xl border border-gray-100 bg-gray-50 font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-xs font-black text-gray-400 uppercase tracking-wider">Delivery Address</label>
-            <textarea
-              placeholder="Enter your full address..."
-              value={profile.address || ''}
-              onChange={(e) => setProfile({ ...profile, address: e.target.value })}
-              className="w-full p-4 h-32 rounded-xl border border-gray-100 bg-gray-50 font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-            />
-          </div>
+    <div className="max-w-4xl mx-auto h-[600px] flex flex-col bg-white rounded-[32px] border border-gray-100 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-green-600 to-green-800 p-6 flex justify-between items-center text-white">
+        <div>
+          <h2 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-80 mb-1">AI Assistant</h2>
+          <h3 className="text-2xl font-black tracking-tighter">Smart Shopping Helper</h3>
         </div>
+        <div className="h-10 w-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
+          <MessageSquare size={20} />
+        </div>
+      </div>
 
-        <div className="pt-6 border-t border-gray-50 flex justify-end">
+      {/* Chat Area */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
+        {chatHistory.map((msg, index) => (
+          <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
+              className={`max-w-[80%] p-4 rounded-2xl text-sm font-medium leading-relaxed shadow-sm ${msg.role === 'user'
+                ? 'bg-gray-900 text-white rounded-tr-none'
+                : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                }`}
+            >
+              {msg.text}
+            </div>
+          </div>
+        ))}
+        {sending && (
+          <div className="flex justify-start">
+            <div className="bg-white p-4 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex gap-2 items-center text-xs font-bold text-gray-500">
+              <Loader2 size={14} className="animate-spin" /> Thinking...
+            </div>
+          </div>
+        )}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Input Area */}
+      <div className="p-6 bg-white border-t border-gray-50">
+        {chatHistory.length === 1 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {suggestions.map((s, i) => (
+              <button
+                key={i}
+                onClick={() => sendMessage(s)}
+                className="text-[10px] font-bold bg-green-50 text-green-700 px-3 py-2 rounded-lg hover:bg-green-100 transition-colors border border-green-100"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Ask anything about shopping, products, or nutrition..."
+            className="flex-1 p-4 rounded-xl border border-gray-100 bg-gray-50 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all placeholder:text-gray-400"
+            disabled={sending}
+          />
           <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-10 py-4 bg-gray-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-600 transition-all disabled:opacity-50"
+            onClick={() => sendMessage()}
+            disabled={sending || !message.trim()}
+            className="h-14 w-14 bg-green-600 text-white rounded-xl flex items-center justify-center hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-green-200"
           >
-            {saving ? 'Saving...' : 'Save Changes'}
+            <Send size={20} className={sending ? 'opacity-0' : 'opacity-100'} />
+            {sending && <Loader2 size={20} className="absolute animate-spin" />}
           </button>
         </div>
+        <p className="text-[10px] text-center text-gray-300 font-bold mt-4 uppercase tracking-widest">
+          Powered by Free OpenRouter AI • Advice may vary
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const WishlistComponent = () => {
+  // Dummy wishlist data for now
+  const wishlistItems = [
+    { id: 1, name: "Organic Fertilizer", price: 500, stock: "In Stock" },
+    { id: 2, name: "Premium Seeds Pack", price: 250, stock: "Low Stock" },
+  ];
+
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <header className="mb-8">
+        <h2 className="text-[10px] font-black text-green-600 uppercase tracking-[0.3em] mb-2">Saved Items</h2>
+        <h3 className="text-4xl font-black text-gray-900 tracking-tighter">Your Wishlist</h3>
+      </header>
+
+      <div className="bg-white rounded-[32px] border border-gray-100 overflow-hidden shadow-sm">
+        {wishlistItems.length === 0 ? (
+          <div className="p-20 text-center">
+            <Heart size={48} className="mx-auto text-gray-200 mb-4" />
+            <p className="text-gray-400 font-bold">Your wishlist is empty</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {wishlistItems.map((item) => (
+              <div key={item.id} className="p-8 flex items-center justify-between hover:bg-gray-50 transition-colors group">
+                <div className="flex items-center gap-6">
+                  <div className="h-16 w-16 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+                    <Leaf size={24} />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black text-gray-900">{item.name}</h4>
+                    <p className="text-sm text-green-600 font-bold">₹{item.price}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className={`px-3 py-1 text-[10px] uppercase font-black rounded-full ${item.stock === 'In Stock' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {item.stock}
+                  </span>
+                  <button className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-red-500 hover:border-red-500 hover:bg-red-50 transition-all">
+                    <Trash2 size={16} />
+                  </button>
+                  <button className="px-6 py-2 bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-green-600 transition-all">
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

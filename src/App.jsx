@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import 'remixicon/fonts/remixicon.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './view/Home'
 import Loding from './components/Loding'

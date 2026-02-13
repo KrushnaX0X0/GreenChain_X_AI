@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import AgriChatbot from "../components/AI/AgriChatbot";
 
 const Shop = () => {
@@ -221,6 +222,7 @@ const Shop = () => {
       </div>
 
       <AgriChatbot />
+      <Footer />
     </div>
   );
 };
