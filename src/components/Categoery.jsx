@@ -8,15 +8,16 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Categoery = () => {
 
   const navigate = useNavigate();
-  
+
   gsap.registerPlugin(ScrollTrigger);
 
   useGSAP(() => {
-    
+
     gsap.from(".heading-text", {
       y: -50,
       opacity: 0,
@@ -28,7 +29,7 @@ const Categoery = () => {
       },
     });
 
-    
+
     gsap.from(".heading-text span", {
       opacity: 0,
       y: 30,
@@ -41,7 +42,7 @@ const Categoery = () => {
       },
     });
 
-    
+
     gsap.from(".card", {
       y: 80,
       opacity: 0,
@@ -56,7 +57,7 @@ const Categoery = () => {
       },
     });
 
-    
+
     gsap.from(".view-btn", {
       scale: 0.5,
       opacity: 0,
@@ -82,7 +83,7 @@ const Categoery = () => {
 
   return (
     <div className="h-[100vh] w-screen overflow-x-hidden">
-      
+
       <div className="w-full flex justify-center">
         <div className="w-[40vw] text-center flex mt-8 justify-center items-center">
           <h1 className="heading-text text-4xl font-medium leading-relaxed flex flex-wrap justify-center gap-1 card-container">
@@ -111,7 +112,7 @@ const Categoery = () => {
         </div>
       </div>
 
-      
+
       <div className="card-container h-[50vh] w-full flex gap-5 p-4 justify-evenly mt-8">
         {products.map((item) => (
           <div
@@ -128,7 +129,18 @@ const Categoery = () => {
               </div>
               <h1 className="font-medium text-xl">{item.name}</h1>
               <p className="font-medium">$ {item.price} / KG</p>
-              <div className="border px-4 py-1 cursor-pointer hover:bg-green-600 hover:text-white rounded-sm transition-all duration-300">
+              <div
+                onClick={() => {
+                  const token = localStorage.getItem("token");
+                  if (!token) {
+                    toast.error("Please Login first!");
+                    navigate("/login");
+                  } else {
+                    navigate("/shop");
+                  }
+                }}
+                className="border px-4 py-1 cursor-pointer hover:bg-green-600 hover:text-white rounded-sm transition-all duration-300"
+              >
                 <button className="cursor-pointer border-none">
                   Add To Cart
                 </button>
@@ -138,10 +150,10 @@ const Categoery = () => {
         ))}
       </div>
 
-      
+
       <div className="h-40 w-full flex items-center justify-center">
         <div className="view-btn h-10 w-40 border flex justify-center items-center cursor-pointer hover:bg-green-600 hover:text-white rounded-sm transition-all duration-300">
-          <button className="border-none cursor-pointer" onClick={()=>{
+          <button className="border-none cursor-pointer" onClick={() => {
             navigate("/shop")
           }}>
             View All Products

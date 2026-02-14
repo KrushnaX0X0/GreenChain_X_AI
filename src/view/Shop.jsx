@@ -66,6 +66,13 @@ const Shop = () => {
   });
 
   const addToCart = (product) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please Login first!");
+      navigate("/login");
+      return;
+    }
+
     if (product.stock === 0) return;
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (cart.some((item) => item.id === product.id)) {
